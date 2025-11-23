@@ -8,6 +8,7 @@ import { Mail, Phone, MapPin, MessageSquare, Send } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { toast } from "sonner";
+import { api } from "@/lib/api";
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -28,25 +29,26 @@ const Contact = () => {
     setFormData({ name: "", email: "", subject: "", message: "" });
   };
 
-  const handleChatSubmit = (e: React.FormEvent) => {
+  const handleChatSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!chatMessage.trim()) return;
 
-    setChatHistory([
-      ...chatHistory,
-      { role: "user", message: chatMessage },
-      { 
-        role: "bot", 
-        message: "Thank you for your question! Our AI-powered system is processing your inquiry. For complex questions, please use the contact form or connect with our support team." 
-      },
-    ]);
+    const userMsg = chatMessage;
+    setChatHistory(prev => [...prev, { role: "user", message: userMsg }]);
     setChatMessage("");
+
+    try {
+      const data = await api.chat(userMsg);
+      setChatHistory(prev => [...prev, { role: "bot", message: data.response }]);
+    } catch (error) {
+      setChatHistory(prev => [...prev, { role: "bot", message: "Sorry, I'm having trouble connecting to the server." }]);
+    }
   };
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Navbar />
-      
+
       <main className="flex-1 py-12 px-4 sm:px-6 lg:px-8">
         <div className="container mx-auto max-w-7xl">
           <div className="text-center space-y-4 mb-12">
@@ -208,11 +210,10 @@ const Contact = () => {
                         className={`flex ${chat.role === "user" ? "justify-end" : "justify-start"}`}
                       >
                         <div
-                          className={`max-w-[80%] p-3 rounded-lg ${
-                            chat.role === "user"
-                              ? "bg-primary text-primary-foreground"
-                              : "bg-card border border-border"
-                          }`}
+                          className={`max-w-[80%] p-3 rounded-lg ${chat.role === "user"
+                            ? "bg-primary text-primary-foreground"
+                            : "bg-card border border-border"
+                            }`}
                         >
                           <p className="text-sm">{chat.message}</p>
                         </div>

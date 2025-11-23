@@ -8,6 +8,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { FileText, ExternalLink, Search, Filter } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { api } from "@/lib/api";
+import { toast } from "sonner";
 
 const Policies = () => {
   const [filters, setFilters] = useState({
@@ -89,7 +91,7 @@ const Policies = () => {
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Navbar />
-      
+
       <main className="flex-1 py-12 px-4 sm:px-6 lg:px-8">
         <div className="container mx-auto max-w-7xl">
           <div className="text-center space-y-4 mb-12">
@@ -178,7 +180,21 @@ const Policies = () => {
 
           {/* Policy Cards */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {policies.map((policy) => (
+            {policies.filter(policy => {
+              const stateMatch = !filters.state || filters.state === "all" || policy.state.toLowerCase().includes(filters.state.toLowerCase()) || policy.state === "All India";
+              const categoryMatch = !filters.category || policy.category.toLowerCase() === filters.category.toLowerCase();
+              // Crop type logic: if filter is set, check if policy description or title mentions it, or if it applies to all crops
+              const cropMatch = !filters.cropType || filters.cropType === "all" ||
+                policy.description.toLowerCase().includes(filters.cropType.toLowerCase()) ||
+                policy.title.toLowerCase().includes(filters.cropType.toLowerCase()) ||
+                policy.eligibility.toLowerCase().includes("all farmers");
+
+              const searchMatch = !filters.searchTerm ||
+                policy.title.toLowerCase().includes(filters.searchTerm.toLowerCase()) ||
+                policy.description.toLowerCase().includes(filters.searchTerm.toLowerCase());
+
+              return stateMatch && categoryMatch && cropMatch && searchMatch;
+            }).map((policy) => (
               <Card key={policy.id} className="border-border shadow-medium hover:shadow-strong transition-all bg-gradient-card">
                 <CardHeader>
                   <div className="flex items-start justify-between gap-4">
@@ -230,6 +246,29 @@ const Policies = () => {
                 </CardContent>
               </Card>
             ))}
+            {policies.filter(policy => {
+              const stateMatch = !filters.state || filters.state === "all" || policy.state.toLowerCase().includes(filters.state.toLowerCase()) || policy.state === "All India";
+              const categoryMatch = !filters.category || policy.category.toLowerCase() === filters.category.toLowerCase();
+              const cropMatch = !filters.cropType || filters.cropType === "all" ||
+                policy.description.toLowerCase().includes(filters.cropType.toLowerCase()) ||
+                policy.title.toLowerCase().includes(filters.cropType.toLowerCase()) ||
+                policy.eligibility.toLowerCase().includes("all farmers");
+              const searchMatch = !filters.searchTerm ||
+                policy.title.toLowerCase().includes(filters.searchTerm.toLowerCase()) ||
+                policy.description.toLowerCase().includes(filters.searchTerm.toLowerCase());
+              return stateMatch && categoryMatch && cropMatch && searchMatch;
+            }).length === 0 && (
+                <div className="col-span-1 lg:col-span-2 text-center py-12">
+                  <p className="text-muted-foreground text-lg">No policies found matching your criteria.</p>
+                  <Button
+                    variant="link"
+                    onClick={() => setFilters({ state: "", category: "", cropType: "", searchTerm: "" })}
+                    className="mt-2"
+                  >
+                    Clear Filters
+                  </Button>
+                </div>
+              )}
           </div>
 
           {/* Info Section */}

@@ -3,64 +3,59 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { MapPin, TrendingUp, Droplets, ThermometerSun, Sprout } from "lucide-react";
+import { MapPin, TrendingUp, Droplets, ThermometerSun, Sprout, RotateCcw } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { toast } from "sonner";
+import { api } from "@/lib/api";
 
 const Analyze = () => {
   const [coordinates, setCoordinates] = useState({ lat: "", lng: "" });
   const [analyzing, setAnalyzing] = useState(false);
   const [results, setResults] = useState<any>(null);
 
-  const handleAnalyze = () => {
+  const handleAnalyze = async () => {
     if (!coordinates.lat || !coordinates.lng) {
       toast.error("Please enter valid coordinates");
       return;
     }
 
+    const lat = parseFloat(coordinates.lat);
+    const lng = parseFloat(coordinates.lng);
+
+    if (isNaN(lat) || lat < -90 || lat > 90) {
+      toast.error("Latitude must be between -90 and 90");
+      return;
+    }
+
+    if (isNaN(lng) || lng < -180 || lng > 180) {
+      toast.error("Longitude must be between -180 and 180");
+      return;
+    }
+
     setAnalyzing(true);
-    
-    // Simulate AI analysis
-    setTimeout(() => {
-      setResults({
-        soilType: "Loamy Soil",
-        moisture: "Moderate (45%)",
-        temperature: "25-30°C",
-        rainfall: "800-1000mm annually",
-        recommendations: [
-          {
-            crop: "Rice",
-            suitability: 95,
-            expectedYield: "6-7 tons/hectare",
-            roi: "₹85,000/hectare",
-            season: "Monsoon (June-Oct)",
-          },
-          {
-            crop: "Wheat",
-            suitability: 88,
-            expectedYield: "4-5 tons/hectare",
-            roi: "₹65,000/hectare",
-            season: "Winter (Nov-Mar)",
-          },
-          {
-            crop: "Sugarcane",
-            suitability: 82,
-            expectedYield: "70-80 tons/hectare",
-            roi: "₹125,000/hectare",
-            season: "Year-round",
-          },
-        ],
-      });
-      setAnalyzing(false);
+
+    try {
+      const data = await api.analyze(coordinates.lat, coordinates.lng);
+      setResults(data);
       toast.success("Analysis complete!");
-    }, 2000);
+    } catch (error) {
+      toast.error("Failed to analyze land. Please try again.");
+    } finally {
+      setAnalyzing(false);
+    }
+  };
+
+  const handleReset = () => {
+    setResults(null);
+    setCoordinates({ lat: "", lng: "" });
+    toast.info("Analysis reset");
   };
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Navbar />
-      
+
       <main className="flex-1 py-12 px-4 sm:px-6 lg:px-8">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center space-y-4 mb-12">
@@ -103,16 +98,29 @@ const Analyze = () => {
                   />
                 </div>
               </div>
-              
-              <Button 
-                onClick={handleAnalyze} 
-                disabled={analyzing}
-                className="w-full gap-2"
-                size="lg"
-              >
-                <MapPin className="h-5 w-5" />
-                {analyzing ? "Analyzing..." : "Analyze Land"}
-              </Button>
+
+              <div className="flex gap-4">
+                <Button
+                  onClick={handleAnalyze}
+                  disabled={analyzing}
+                  className="flex-1 gap-2"
+                  size="lg"
+                >
+                  <MapPin className="h-5 w-5" />
+                  {analyzing ? "Analyzing..." : "Analyze Land"}
+                </Button>
+                {results && (
+                  <Button
+                    onClick={handleReset}
+                    variant="outline"
+                    size="lg"
+                    className="gap-2"
+                  >
+                    <RotateCcw className="h-5 w-5" />
+                    Reset
+                  </Button>
+                )}
+              </div>
             </CardContent>
           </Card>
 
