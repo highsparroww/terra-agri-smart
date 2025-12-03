@@ -23,35 +23,48 @@ const Footer = () => {
             </p>
           </div>
 
-          {/* Quick Links */}
           <div>
-            <h3 className="font-display font-semibold text-foreground mb-4">Quick Links</h3>
+            <h3 className="font-display font-semibold text-foreground mb-4">Platform</h3>
             <ul className="space-y-2">
               <li>
-                <Link to="/analyze" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                  Analyze Land
+                <Link to="/" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                  Features
                 </Link>
               </li>
               <li>
-                <Link to="/invest" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                  Investment Opportunities
+                <Link to="/pricing" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                  Pricing
                 </Link>
               </li>
               <li>
-                <Link to="/policies" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                  Government Policies
+                <Link to="/enterprise" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                  Enterprise
+                </Link>
+              </li>
+              <li>
+                <Link to="/case-studies" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                  Case Studies
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Company */}
           <div>
             <h3 className="font-display font-semibold text-foreground mb-4">Company</h3>
             <ul className="space-y-2">
               <li>
                 <Link to="/about" className="text-sm text-muted-foreground hover:text-primary transition-colors">
                   About Us
+                </Link>
+              </li>
+              <li>
+                <Link to="/careers" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                  Careers
+                </Link>
+              </li>
+              <li>
+                <Link to="/blog" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                  Blog
                 </Link>
               </li>
               <li>
@@ -62,24 +75,29 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Contact Info */}
+          {/* Legal */}
           <div>
-            <h3 className="font-display font-semibold text-foreground mb-4">Contact</h3>
-            <ul className="space-y-3">
-              <li className="flex items-start gap-2 text-sm text-muted-foreground">
-                <Mail className="h-4 w-4 mt-0.5 text-primary" />
-                <span>info@terracrop.com</span>
+            <h3 className="font-display font-semibold text-foreground mb-4">Legal</h3>
+            <ul className="space-y-2">
+              <li>
+                <Link to="/privacy" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                  Privacy Policy
+                </Link>
               </li>
-              <li className="flex items-start gap-2 text-sm text-muted-foreground">
-                <Phone className="h-4 w-4 mt-0.5 text-primary" />
-                <span>+1 (555) 123-4567</span>
+              <li>
+                <Link to="/terms" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                  Terms of Service
+                </Link>
               </li>
-              <li className="flex items-start gap-2 text-sm text-muted-foreground">
-                <MapPin className="h-4 w-4 mt-0.5 text-primary" />
-                <span>Agricultural Innovation Hub, Silicon Valley</span>
+              <li>
+                <Link to="/cookies" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                  Cookie Policy
+                </Link>
               </li>
             </ul>
           </div>
+
+
         </div>
 
         <div className="mt-8 pt-8 border-t border-border">
